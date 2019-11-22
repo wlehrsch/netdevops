@@ -1,0 +1,24 @@
+---
+- name: "PLAY 1: apply NTP updates"
+  hosts: all
+  tasks:
+    - name: "TASK 0: Validate NTP server IP addresses"
+      assert:
+        that:
+          - "ntp_server1 is defined"
+          - "ntp_server2 is defined"
+          - "ntp_server1 | ipv4 == ntp_server1"
+          - "ntp_server2 | ipv4 == ntp_server2"
+    - name: "TASK 1: log into routers and apply updates"
+      ios_config:
+        lines:
+          - "ntp authenticate"
+          - "ntp logging"
+          - "ntp server {{ ntp_server1 }}"
+          - "ntp server {{ ntp_server2 }}"
+      register: "ntp_updates"
+    - name: "TASK 2: print changes if NTP config changed"
+      debug:
+        var: "ntp_updates.updates"
+      when: "ntp_updates.updates is defined"
+...
