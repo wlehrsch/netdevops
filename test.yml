@@ -1,6 +1,6 @@
 ---
 - name: "PLAY 1: Import original playbook with mock NTP servers"
-  import_playbook: "ntp_config.yml"
+  import_playbook: "ntp_conf.yml"
   vars:
     ntp_server1: "203.0.113.1"
     ntp_server2: "203.0.113.2"
@@ -20,21 +20,25 @@
           - "'203.0.113.2' in ntp_associations.stdout[0]"
         msg: "Missing required NTP data:\n{{ ntp_associations.stdout[0] }}"
 
-     - name: "TASK 3: Remove mock NTP servers"
-       ios_config:
-         lines:
-           - "no ntp server 203.0.113.1"
-           - "no ntp server 203.0.113.2"
+    - name: "TASK 3: Remove mock NTP servers"
+      ios_config:
+        lines:
+          - "no ntp server 203.0.113.1"
+          - "no ntp server 203.0.113.2"
 
-     - name: "TASK 5: Gather mock NTP data after disabling NTP"
-       ios_command:
-         commands: "show ntp associations"
-       register: "ntp_associations"
+    - name: "TASK 4: Wait for NTP database to clear"
+      pause:
+        seconds: 1
 
-     - name: "TASK 6: Ensure mock NTP data is absent"
-       assert:
-         that:
-           - "'203.0.113.1' not in ntp_associations.stdout[0]"
-           - "'203.0.113.2' not in ntp_associations.stdout[0]"
-         msg: "Saw unwanted NTP data:\n{{ ntp_associations.stdout[0] }}"
+    - name: "TASK 5: Gather mock NTP data after disabling NTP"
+      ios_command:
+        commands: "show ntp associations"
+      register: "ntp_associations"
+
+    - name: "TASK 6: Ensure mock NTP data is absent"
+      assert:
+        that:
+          - "'203.0.113.1' not in ntp_associations.stdout[0]"
+          - "'203.0.113.2' not in ntp_associations.stdout[0]"
+        msg: "Saw unwanted NTP data:\n{{ ntp_associations.stdout[0] }}"
 ...
