@@ -1,0 +1,7 @@
+---
+- name: "PLAY 1: Import original playbook with mock NTP servers"
+  import_playbook: "ntp_config.yml"
+  vars:
+    ntp_server1: "203.0.113.1"
+    ntp_server2: "203.0.113.2"
+...
