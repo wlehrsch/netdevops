@@ -31,4 +31,10 @@
          commands: "show ntp associations"
        register: "ntp_associations"
 
+     - name: "TASK 6: Ensure mock NTP data is absent"
+       assert:
+         that:
+           - "'203.0.113.1' not in ntp_associations.stdout[0]"
+           - "'203.0.113.2' not in ntp_associations.stdout[0]"
+         msg: "Saw unwanted NTP data:\n{{ ntp_associations.stdout[0] }}"
 ...
