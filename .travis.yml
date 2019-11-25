@@ -8,6 +8,7 @@ install:
 
 before_script:
   - "yamllint -s *.yml"
+  - "echo 'fsa7yaof' >> ~/vault_pass_file.txt"
 
 script:
   - "ansible-playbook test.yml"
